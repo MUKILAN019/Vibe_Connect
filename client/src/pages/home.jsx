@@ -10,8 +10,8 @@ export default function Home() {
   const [showKanban, setShowKanban] = useState(false);
   const [showList, setShowList] = useState(false);
 
-  // Simulating data fetch
-  setTimeout(() => setLoading(false), 2000); // Replace this with actual fetch logic
+
+  setTimeout(() => setLoading(false), 2000); 
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-green-950 text-white p-6">
@@ -23,29 +23,29 @@ export default function Home() {
         <>
           <h1 className="text-4xl font-extrabold text-green-300 mb-8">Task Manager</h1>
           
-          {/* Buttons & Search Bar - Fixed Position */}
+         
           <div className="flex justify-between items-center w-full max-w-6xl mb-6 px-6">
             <div className="flex space-x-4">
-              {/* Kanban Toggle Button */}
+            
               <button 
-                className="btn bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg" 
+                className={showKanban ? `btn bg-blue-300 hover:bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg`:`btn bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg`} 
                 onClick={() => {
                   setShowKanban(true);
                   setShowList(false);
                 }}
               >
-                {showKanban ? "Hide Kanban" : "Show Kanban"}
+                Kanban
               </button>
               
-              {/* List Toggle Button */}
+              
               <button 
-                className="btn btn-warning" 
+                className={showList? `bg-yellow-300 hover:bg-yellow-400 text-white px-4  rounded-lg shadow-lg`:`btn btn-warning`} 
                 onClick={() => {
                   setShowList(true);
                   setShowKanban(false);
                 }}
               >
-                {showList ? "Hide List" : "Show List"}
+                List
               </button>
               
               <DropDown />

@@ -15,7 +15,7 @@ export function SortableItem({ id, title }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white p-2 rounded shadow cursor-pointer text-black"
+      className="bg-white p-2 rounded shadow cursor-pointer w-1/2 text-black"
     >
       {title}
     </div>
