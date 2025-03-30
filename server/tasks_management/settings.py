@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'taskapp'
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,15 @@ WSGI_APPLICATION = 'tasks_management.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  
+        'NAME': 'tasks',  
+        'USER': 'tasks_owner',  
+        'PASSWORD': 'npg_mJobG17esOvy',  
+        'HOST': 'ep-shrill-moon-a1ddpqsb-pooler.ap-southeast-1.aws.neon.tech', 
+        'PORT': '5432', 
+        'OPTIONS': {
+            'sslmode': 'require',  
+        },
     }
 }
 

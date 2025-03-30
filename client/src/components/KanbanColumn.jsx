@@ -1,7 +1,8 @@
 import { useDroppable } from "@dnd-kit/core";
 import { SortableItem } from "./SortableItem";
+import { Trash2 } from "lucide-react";
 
-export function KanbanColumn({ title, tasks }) {
+export function KanbanColumn({ title, tasks, onDelete }) {
   const { setNodeRef } = useDroppable({ id: title });
 
   return (
@@ -12,7 +13,12 @@ export function KanbanColumn({ title, tasks }) {
       <h2 className="text-2xl font-bold mb-4 capitalize text-green-300">{title}</h2>
       <div className="space-y-4 w-full">
         {tasks.map((task) => (
-          <SortableItem key={task.id} id={task.id} title={task.title} />
+          <div key={task.id} className="flex justify-between items-center bg-green-800 p-3 rounded-md">
+            <SortableItem id={task.id} title={task.title} />
+            <button onClick={() => onDelete(task.id)} className="text-red-500 hover:text-red-700">
+              <Trash2 size={20} className="text-red-400" />
+            </button>
+          </div>
         ))}
       </div>
     </div>
