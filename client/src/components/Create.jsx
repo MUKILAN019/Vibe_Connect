@@ -24,7 +24,7 @@ export default function Create() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/task/create/",
+        "https://vibe-connect-15wk.onrender.com/api/task/create/",
         {
           title: taskName,
           assignee_id: assignedTo,

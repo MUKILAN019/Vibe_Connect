@@ -24,10 +24,9 @@ export const stopRefresh = () => {
 
 export const login = async (email, password, navigate) => {
   try {
-    const response = await axios.post("http://localhost:8000/api/login/", { email, password }, { withCredentials: true });
-    console.log(response.data.tokens.access)
+    const response = await axios.post("https://vibe-connect-15wk.onrender.com/api/login/", { email, password }, { withCredentials: true });
     Cookies.set("access_token", response.data.tokens.access, { expires: 1, sameSite: "Strict" });
-
+    Cookies.set("refresh_token", response.data.tokens.refresh, { expires: 1, sameSite: "Strict" });
     startRefresh();
     navigate("/home");  
   } catch (error) {

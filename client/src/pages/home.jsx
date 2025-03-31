@@ -33,7 +33,7 @@ export default function Home() {
         return;
       }
 
-      const response = await axios.get("http://127.0.0.1:8000/api/tasks/", {
+      const response = await axios.get("https://vibe-connect-15wk.onrender.com/api/tasks/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -51,7 +51,7 @@ export default function Home() {
         return;
       }
 
-      const response = await axios.get("http://localhost:8000/api/tasks/", {
+      const response = await axios.get("https://vibe-connect-15wk.onrender.com/api/tasks/", {
         headers: { Authorization: `Bearer ${token}` },
         params: filterType ? { filter: filterType } : {},
       });
