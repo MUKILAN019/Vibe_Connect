@@ -22,7 +22,7 @@ export default function Lists({ tasks: propTasks, fetchTasks }) {
     }
 
     axios
-      .get("http://localhost:8000/api/tasks/", {
+      .get("http://127.0.0.1:8000/api/tasks/", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
