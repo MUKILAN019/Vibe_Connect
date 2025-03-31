@@ -1,18 +1,20 @@
-import { useState } from 'react'
-import SignUp from './pages/auth/signup'
-import SignIn from './pages/auth/sigin'
-import Home from './pages/home'
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import SignUp from "./pages/auth/signup.jsx";
+import SignIn from "./pages/auth/signin.jsx";
+import Home from "./pages/home.jsx";
+import {ProtectedRoute,AuthRoute} from "./utils/ProtectedRoute"; 
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <Home/>
-      
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <AuthRoute><SignIn /></AuthRoute>} />
+        <Route path="/signup" element={<AuthRoute><SignUp /></AuthRoute>} />
+        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

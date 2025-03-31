@@ -1,20 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./KanbanColumn";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-const sampleTasks = {
-  todo: [{ id: "1", title: "Task 1" }, { id: "2", title: "Task 2" }],
-  inProgress: [{ id: "3", title: "Task 3" }],
-  done: [{ id: "4", title: "Task 4" }],
-};
+const API_BASE_URL = "http://127.0.0.1:8000"; 
 
 export default function Kanban() {
-  const [tasks, setTasks] = useState(sampleTasks);
+  const [tasks, setTasks] = useState({
+    TODO: [],
+    IN_PROGRESS: [],
+    DONE: [],
+  });
 
-  const onDragEnd = (event) => {
+  
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/kanban/`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("access_token")}`, 
+          },
+        });
+      
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+ 
+  
+  const onDragEnd = async (event) => {
     const { active, over } = event;
-    if (!over || !over.id || !(over.id in tasks)) return; 
+    if (!over || !over.id || !(over.id in tasks)) return;
 
     const sourceColumn = Object.keys(tasks).find((key) =>
       tasks[key].some((task) => task.id === active.id)
@@ -25,18 +47,46 @@ export default function Kanban() {
 
     const taskToMove = tasks[sourceColumn].find((task) => task.id === active.id);
 
-    setTasks((prev) => ({
-      ...prev,
-      [sourceColumn]: prev[sourceColumn].filter((task) => task.id !== active.id),
-      [destinationColumn]: [...prev[destinationColumn], taskToMove],
-    }));
+    
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/api/task/update/${taskToMove.id}/`,
+        { status: destinationColumn },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
+          },
+        }
+      );
+
+      
+      setTasks((prev) => ({
+        ...prev,
+        [sourceColumn]: prev[sourceColumn].filter((task) => task.id !== active.id),
+        [destinationColumn]: [...prev[destinationColumn], { ...taskToMove, status: destinationColumn }],
+      }));
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
   };
 
-  const deleteTask = (column, taskId) => {
-    setTasks((prev) => ({
-      ...prev,
-      [column]: prev[column].filter((task) => task.id !== taskId),
-    }));
+  
+  const deleteTask = async (column, taskId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/kanban/delete/${taskId}/`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+        },
+      });
+
+      
+      setTasks((prev) => ({
+        ...prev,
+        [column]: prev[column].filter((task) => task.id !== taskId),
+      }));
+    } catch (error) {
+      console.error("Error deleting task:", error.response?.data || error);
+    }
   };
 
   return (
