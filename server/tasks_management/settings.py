@@ -1,4 +1,5 @@
 import os
+import ast
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -9,13 +10,15 @@ load_dotenv()
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
-SECRET_KEY = os.getenv('SECRET_KEY')  
+# ================ Security Settings ================
+SECRET_KEY = os.environ['SECRET_KEY']  # Enforce secret key in production
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173').split(',')
 
-# Application definition
+# Parse list-based environment variables safely
+ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS', "['localhost', '127.0.0.1']"))
+CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv('CSRF_TRUSTED_ORIGINS', "['http://localhost:5173']"))
+
+# ================ Application Definition ================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -23,9 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third-party
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+    
+    # Local
     'taskapp',
 ]
 
@@ -41,20 +48,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Security headers
+# ================ Security Headers ================
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000  
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
 
 ROOT_URLCONF = 'tasks_management.urls'
 
-# Database
+# ================ Database Configuration ================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -62,24 +71,24 @@ DATABASES = {
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
-            'sslmode': os.getenv('DB_SSL_MODE'),
-            'sslrootcert': os.path.join(BASE_DIR, 'prod-ca-2021.crt'),  
+            'sslmode': os.getenv('DB_SSL_MODE', 'require'),
+            'sslrootcert': os.path.join(BASE_DIR, 'prod-ca-2021.crt'),
         },
     }
 }
 
-# CORS
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+# ================ CORS Configuration ================
+CORS_ALLOWED_ORIGINS = ast.literal_eval(os.getenv('CORS_ALLOWED_ORIGINS', "['http://localhost:5173']"))
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True') == 'True'
 
-# Static files
+# ================ Static Files ================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# REST Framework
+# ================ REST Framework & JWT ================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -95,10 +104,9 @@ REST_FRAMEWORK = {
     )
 }
 
-# JWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=int(os.getenv('ACCESS_TOKEN_LIFETIME', 2))),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.getenv('REFRESH_TOKEN_LIFETIME', 7))),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "ALGORITHM": "HS256",
@@ -106,11 +114,18 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# Other Configurations
+# ================ Required Render Fixes ================
+# Add your Render domain to ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS
+if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
+    RENDER_HOST = os.environ['RENDER_EXTERNAL_HOSTNAME']
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
+
+# ================ Other Configurations ================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Adjust this path as needed
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
