@@ -22,7 +22,7 @@ export default function Lists({ tasks: propTasks, fetchTasks }) {
     }
 
     axios
-      .get("http://127.0.0.1:8000/api/tasks/", {
+      .get("https://vibe-connect-15wk.onrender.com/api/tasks/", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

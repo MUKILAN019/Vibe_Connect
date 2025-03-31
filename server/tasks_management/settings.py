@@ -4,21 +4,21 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load environment variables
+
 load_dotenv()
 
-# Build paths
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ================ Security Settings ================
-SECRET_KEY = os.environ['SECRET_KEY']  # Enforce secret key in production
+
+SECRET_KEY = os.environ['SECRET_KEY']  
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Parse list-based environment variables safely
+
 ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS', "['localhost', '127.0.0.1']"))
 CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv('CSRF_TRUSTED_ORIGINS', "['http://localhost:5173']"))
 
-# ================ Application Definition ================
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ================ Security Headers ================
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = False
@@ -63,7 +63,7 @@ if not DEBUG:
 
 ROOT_URLCONF = 'tasks_management.urls'
 
-# ================ Database Configuration ================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -79,16 +79,16 @@ DATABASES = {
     }
 }
 
-# ================ CORS Configuration ================
+
 CORS_ALLOWED_ORIGINS = ast.literal_eval(os.getenv('CORS_ALLOWED_ORIGINS', "['http://localhost:5173']"))
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True') == 'True'
 
-# ================ Static Files ================
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ================ REST Framework & JWT ================
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -114,14 +114,13 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# ================ Required Render Fixes ================
-# Add your Render domain to ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS
+
 if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
     RENDER_HOST = os.environ['RENDER_EXTERNAL_HOSTNAME']
     ALLOWED_HOSTS.append(RENDER_HOST)
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
 
-# ================ Other Configurations ================
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

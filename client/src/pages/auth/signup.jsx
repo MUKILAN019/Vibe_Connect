@@ -16,7 +16,7 @@ export default function SignUp() {
     setMessage({ text: "", type: "" });
 
     try {
-      const response = await axios.post("http://localhost:8000/api/register/", form);
+      const response = await axios.post("https://vibe-connect-15wk.onrender.com/api/register/", form);
       setMessage({ text: response.data.message || "Account created successfully!", type: "success" });
       setForm({ username: "", email: "", password: "" });
       nav('/')
