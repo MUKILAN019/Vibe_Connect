@@ -9,6 +9,9 @@ Vibe Connect is a web application that facilitates seamless interaction between 
 - **Backend**: [Vibe Connect Backend](https://vibe-connect-15wk.onrender.com/)
 - **Frontend**: [Vibe Connect Frontend](https://vibe-connect-nine.vercel.app/)
 
+## Project Walkthrough Video
+[Watch Here](https://drive.google.com/file/d/1V9iXcd60TMIkMoTm7eO767bLfktFLkF5/view)
+
 ---
 
 ## Technology Stack
@@ -99,6 +102,4 @@ For detailed API documentation, visit: **[Backend API](https://vibe-connect-15wk
 - Always keep `DEBUG = True` during development.
 - In production, use **Daphne** instead of the default development server.
 - Ensure environment variables are configured correctly before deployment.
-
-
 
