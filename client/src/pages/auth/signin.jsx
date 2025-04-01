@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 export default function SignIn() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -74,7 +74,8 @@ export default function SignIn() {
         {error && <p className="text-center text-red-400 mt-4">{error}</p>}
 
         <p className="text-center text-green-400 mt-4 text-sm">
-          Don't have an account? <a href="/signup" className="text-green-300 underline hover:text-green-200">Sign up</a>
+          Don't have an account? 
+          <Link to="/signup" className="text-green-300 underline hover:text-green-200">Sign up</Link>
         </p>
       </div>
     </div>
